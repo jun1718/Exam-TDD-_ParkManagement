@@ -24,9 +24,19 @@ public class Entrance {
         enteredTimeRecords.put(holdCarQue.peekLast().getNumber(), date);
     }
 
+    public Car takeCar() {
+        if (holdCarQue.size() == 0) {
+            throw new IndexOutOfBoundsException("현재 대기중인 차량이 없습니다.");
+        }
+
+        return holdCarQue.pollFirst();
+    }
+
     public Map<String, Date> getInputRcords() {
         return enteredTimeRecords;
     }
 
-
+    public Deque<Car> getHoldCarQue() {
+        return holdCarQue;
+    }
 }
