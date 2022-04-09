@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ParkingLot {
-    private Car carEntering = null;
     private Entrance entrance = new Entrance();
     private List<ParkingSpace> parkingSpaces = new ArrayList<>();
     private Map<String, Integer> indexRepositoryForSpeedUp = new HashMap<>();
@@ -18,7 +17,6 @@ public class ParkingLot {
         initStructor(structor);
     }
 
-    // TODO: 생성자 만들어서 해당부분 자동실행되게하고 접근지정자 priavete로 변경
     public void initStructor(Structor structor) {
         structorMap = structor.getStructor();
         for (String code : structorMap.keySet()) {
@@ -39,32 +37,44 @@ public class ParkingLot {
         }
 
         entrance.receiveCar(car);
-        this.carEntering = car;
     }
 
     public void parking() {
         //TODO : 나중에 차주가 원하는 주차구역에 자리가 없을 경우 다른 구역으로 배정하고 차주의 주차구역정보를 변경
-        for (int i = 0; i < parkingSpaces.size(); i++) {
-            if (!isEqualCode(i) || !isEmptyAtParkingSpaceToHope(i)) {
+        Car car = entrance.takeCar();
+        String locationHoping = car.getLocationHoping();
+
+        ParkingSpace parkingSpaceOfIndex = null;
+        int index = 0;
+        boolean areAnyAvailableSpace = false;
+
+        for (; index < parkingSpaces.size(); index++) {
+            parkingSpaceOfIndex = parkingSpaces.get(index);
+            if (!isEqualCode(locationHoping, parkingSpaceOfIndex) || !isEmptyAtParkingSpaceToHope(parkingSpaceOfIndex)) {
                 continue;
             }
-            inputCar(i);
+
+            areAnyAvailableSpace = true;
+            break;
+        }
+
+        if (areAnyAvailableSpace) {
+            inputCar(parkingSpaceOfIndex, car, index);
         }
     }
 
-    private boolean isEmptyAtParkingSpaceToHope(int index) {
-        return parkingSpaces.get(index).getCar().equals(Car.getEmptyCar());
+    private boolean isEqualCode(String locationHoping, ParkingSpace parkingSpaceOfIndex) {
+        return parkingSpaceOfIndex.getCode().equals(locationHoping);
     }
 
-    private boolean isEqualCode(int index) {
-        return parkingSpaces.get(0).getCode().equals(carEntering.getLocationHoping());
+    private boolean isEmptyAtParkingSpaceToHope(ParkingSpace parkingSpaceOfIndex) {
+        return parkingSpaceOfIndex.getCar().equals(Car.getEmptyCar());
     }
 
-    private void inputCar(int index) {
-        ParkingSpace parkingSpace= parkingSpaces.get(index);
+    private void inputCar(ParkingSpace parkingSpaceOfIndex, Car car, int index) {
+        parkingSpaceOfIndex.setCar(car);
+        String carNumber = parkingSpaceOfIndex.getCar().getNumber();
 
-        parkingSpace.setCar(carEntering);
-        String carNumber = parkingSpace.getCar().getNumber();
         indexRepositoryForSpeedUp.put(carNumber, index);
         parkingCount++;
     }
