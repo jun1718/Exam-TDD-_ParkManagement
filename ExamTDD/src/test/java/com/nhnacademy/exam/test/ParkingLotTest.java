@@ -7,9 +7,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.nhnacademy.exam.main.Car;
+import com.nhnacademy.exam.main.Money;
 import com.nhnacademy.exam.main.ParkingLot;
 import com.nhnacademy.exam.main.ParkingSpace;
 import com.nhnacademy.exam.main.Structor;
+import com.nhnacademy.exam.main.User;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -122,29 +124,32 @@ public class ParkingLotTest {
             .hasMessageContaining("매개변수로 전달된");
     }
 
-    @DisplayName("주차장에서 차가 나간다. -list의 parkingSpace를 빈값으로 변경 후 indexRepository의 key값에 해당하는 entry 제거")
+    @DisplayName("주차장에서 차가 나간다. -주차장에 없는 차량을 내보내려 한 경우 예외를 발생한다.")
     @Test
-    public void leaveParkingLotTest_EmptyAndDelete() {
+    public void leaveParkingLotTest_notParking() {
         exeInitStructorAsMockingMap();
-
+        User user = new User("0001", new Money());
         Car car = new Car("12가0001", "A-1");
-        parkingLot.receiveCar(car);
-        parkingLot.parking();
-        parkingLot.leaveParkingLot(car);
+        user.setCar(car);
 
-        assertThatThrownBy(() -> parkingLot.findCar(car.getNumber()))
+        assertThatThrownBy(() -> parkingLot.leaveParkingLot(user))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("차번호의 차량은 주차장에 없습니다.");
     }
 
-    @DisplayName("주차장에서 차가 나간다. -없는 차번호의 차량을 내보내려 한 경우 예외를 발생한다.")
+    @DisplayName("주차장에서 차가 나간다. -주차장에 있는 차량을 내보낸 후 내보낸 처리결과를 test 한다.(list의 parkingSpace를 빈값으로 변경 후 indexRepository의 key값에 해당하는 entry 제거)")
     @Test
-    public void leaveParkingLotTest_() {
+    public void leaveParkingLotTest_EmptyAndDelete() {
         exeInitStructorAsMockingMap();
-
+        User user = new User("0001", new Money());
         Car car = new Car("12가0001", "A-1");
+        user.setCar(car);
 
-        assertThatThrownBy(() -> parkingLot.leaveParkingLot(car))
+        parkingLot.receiveCar(user.getCar());
+        parkingLot.parking();
+        parkingLot.leaveParkingLot(user);
+
+        assertThatThrownBy(() -> parkingLot.findCar(car.getNumber()))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("차번호의 차량은 주차장에 없습니다.");
     }
