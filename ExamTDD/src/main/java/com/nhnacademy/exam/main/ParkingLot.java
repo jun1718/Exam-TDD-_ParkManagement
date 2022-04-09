@@ -48,8 +48,6 @@ public class ParkingLot {
         FindAvailableSpace findAvailableSpace = new FindAvailableSpace(parkingSpaces);
         findAvailableSpace.findAvailableSpace(locationHoping);
 
-        // TODO: test
-        System.out.println(findAvailableSpace.isAreAnyAvailableSpace());
         if (findAvailableSpace.isAreAnyAvailableSpace()) {
             car.setLocation(locationHoping);
             inputCar(findAvailableSpace.getAvailableParkingSpace(), car, findAvailableSpace.getIndex());
@@ -65,13 +63,15 @@ public class ParkingLot {
     }
 
     public Car findCar(String number) {
-        // TODO: test
-        System.out.println(indexRepositoryForSpeedUp.get(number));
+        Integer index = indexRepositoryForSpeedUp.get(number);
+        if (index == null) {
+            throw new IllegalArgumentException("매개변수로 전달된 차번호의 차량은 주차장에 없습니다.");
+        }
 
-        ParkingSpace parkingSpace = parkingSpaces.get(indexRepositoryForSpeedUp.get(number));
-
-        if (parkingSpace.equals(new ParkingSpace("", Car.getEmptyCar()))) {
-            throw new IllegalArgumentException();
+        ParkingSpace parkingSpace = parkingSpaces.get(index);
+        if (parkingSpace == null
+                || parkingSpace.equals(new ParkingSpace("", Car.getEmptyCar()))) {
+            throw new IllegalArgumentException("매개변수로 전달된 차번호가 있는 공간은 무슨 이유에선지 비워져 있습니다.");
         }
 
         return parkingSpace.getCar();
@@ -85,7 +85,13 @@ public class ParkingLot {
         return parkingCount;
     }
 
-    public void carOut(Car car) {
-        parkingSpaces.set(indexRepositoryForSpeedUp.get(car.getNumber()), new ParkingSpace("", new Car("", "")));
+    public void leaveParkingLot(Car car) {
+        Integer index = indexRepositoryForSpeedUp.get(car.getNumber());
+        if (index == null) {
+            throw new IllegalArgumentException("매개변수로 전달된 차번호의 차량은 주차장에 없습니다.");
+        }
+
+        parkingSpaces.set(index, new ParkingSpace("", new Car("", "")));
+        indexRepositoryForSpeedUp.remove(car.getNumber());
     }
 }
