@@ -1,20 +1,32 @@
 package com.nhnacademy.exam.main;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 public class Entrance {
     Map<String, Date> enteredTimeRecords = new HashMap<>();
+    Deque<Car> holdCarQue = new LinkedList<Car>();
 
-    public void scan(Car car) {
+    public void receiveCar(Car car) {
+        holdCarQue.offerLast(car);
+        scan();
+    }
+
+    private void scan() {
         Date date = new Date();
-        System.out.println(date);
-        enteredTimeRecords.put(car.getId(), date);
+        enteredTimeRecords.put(holdCarQue.peekLast().getNumber(), date);
     }
 
     public Map<String, Date> getInputRcords() {
         return enteredTimeRecords;
     }
+
+
 }

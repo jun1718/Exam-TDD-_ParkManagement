@@ -16,11 +16,11 @@ public class EntranceTest {
 
     @DisplayName("차량 번호를 스캔한다.")
     @Test
-    void scan() {
+    void scanTest() {
         Car car = mock(Car.class);
-        when(car.getId()).thenReturn("12가0001");
+        when(car.getNumber()).thenReturn("12가0001");
 
-        entrance.scan(car);
+        entrance.receiveCar(car);
         assertThat(entrance.getInputRcords().get("12가0001"))
             .isNotNull();
     }
