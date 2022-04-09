@@ -28,6 +28,10 @@ public class Car {
         return locationHoping;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

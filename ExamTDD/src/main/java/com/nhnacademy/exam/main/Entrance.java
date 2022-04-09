@@ -16,6 +16,8 @@ public class Entrance {
 
     public void receiveCar(Car car) {
         holdCarQue.offerLast(car);
+
+        // FIXME: 여기서 scan()하면 아직 대기중인데 입장한 시각을 체크해버림. 나중에 scan을 독립되도록 리팩토링
         scan();
     }
 
@@ -32,7 +34,7 @@ public class Entrance {
         return holdCarQue.pollFirst();
     }
 
-    public Map<String, Date> getInputRcords() {
+    public Map<String, Date> getInputRecords() {
         return enteredTimeRecords;
     }
 

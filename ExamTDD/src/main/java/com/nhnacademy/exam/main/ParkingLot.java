@@ -18,6 +18,7 @@ public class ParkingLot {
     }
 
     public void initStructor(Structor structor) {
+        parkingSpaces.clear();
         structorMap = structor.getStructor();
         for (String code : structorMap.keySet()) {
             inputParkingSpace(code);
@@ -40,46 +41,33 @@ public class ParkingLot {
     }
 
     public void parking() {
-        //TODO : 나중에 차주가 원하는 주차구역에 자리가 없을 경우 다른 구역으로 배정하고 차주의 주차구역정보를 변경
+        // TODO : 나중에 차주가 원하는 주차구역에 자리가 없을 경우 다른 구역으로 배정하고 차주의 주차구역정보를 변경
         Car car = entrance.takeCar();
         String locationHoping = car.getLocationHoping();
 
-        ParkingSpace parkingSpaceOfIndex = null;
-        int index = 0;
-        boolean areAnyAvailableSpace = false;
+        FindAvailableSpace findAvailableSpace = new FindAvailableSpace(parkingSpaces);
+        findAvailableSpace.findAvailableSpace(locationHoping);
 
-        for (; index < parkingSpaces.size(); index++) {
-            parkingSpaceOfIndex = parkingSpaces.get(index);
-            if (!isEqualCode(locationHoping, parkingSpaceOfIndex) || !isEmptyAtParkingSpaceToHope(parkingSpaceOfIndex)) {
-                continue;
-            }
-
-            areAnyAvailableSpace = true;
-            break;
+        // TODO: test
+        System.out.println(findAvailableSpace.isAreAnyAvailableSpace());
+        if (findAvailableSpace.isAreAnyAvailableSpace()) {
+            car.setLocation(locationHoping);
+            inputCar(findAvailableSpace.getAvailableParkingSpace(), car, findAvailableSpace.getIndex());
         }
-
-        if (areAnyAvailableSpace) {
-            inputCar(parkingSpaceOfIndex, car, index);
-        }
-    }
-
-    private boolean isEqualCode(String locationHoping, ParkingSpace parkingSpaceOfIndex) {
-        return parkingSpaceOfIndex.getCode().equals(locationHoping);
-    }
-
-    private boolean isEmptyAtParkingSpaceToHope(ParkingSpace parkingSpaceOfIndex) {
-        return parkingSpaceOfIndex.getCar().equals(Car.getEmptyCar());
     }
 
     private void inputCar(ParkingSpace parkingSpaceOfIndex, Car car, int index) {
         parkingSpaceOfIndex.setCar(car);
-        String carNumber = parkingSpaceOfIndex.getCar().getNumber();
 
+        String carNumber = parkingSpaceOfIndex.getCar().getNumber();
         indexRepositoryForSpeedUp.put(carNumber, index);
         parkingCount++;
     }
 
     public Car findCar(String number) {
+        // TODO: test
+        System.out.println(indexRepositoryForSpeedUp.get(number));
+
         ParkingSpace parkingSpace = parkingSpaces.get(indexRepositoryForSpeedUp.get(number));
 
         if (parkingSpace.equals(new ParkingSpace("", Car.getEmptyCar()))) {

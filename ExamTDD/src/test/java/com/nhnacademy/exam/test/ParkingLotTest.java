@@ -11,6 +11,8 @@ import com.nhnacademy.exam.main.ParkingLot;
 import com.nhnacademy.exam.main.Structor;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -53,7 +55,8 @@ public class ParkingLotTest {
             .doesNotThrowAnyException();
     }
 
-    @DisplayName("A-1에 주차한다.")
+    // TODO: 이너클래스로해서 테스트결과 이쁘게 볼수있게 바꿔라
+    @DisplayName("A-1에 주차한다. -차량객체가 주차공간에 들어가고 차량객체의 주차구역위치속성에 주차구역값을 넣어준다.")
     @Test
     void parkingTest() {
         exeInitStructorAsMockingMap();
@@ -64,20 +67,53 @@ public class ParkingLotTest {
 
         assertThat(parkingLot.getParkingSpaces().get(0).getCar().getNumber())
             .isEqualTo("12가0001");
+        assertThat(parkingLot.getParkingSpaces().get(0).getCar().getLocationHoping())
+            .isEqualTo("A-1");
         assertThat(parkingLot.getParkingSpaces().get(0).getCode())
             .isEqualTo("A-1");
     }
 
-    //    @DisplayName("주차장에서 차객체를 찾는다.")
-//    @Test
-//    void findCarTest() {
-//        Car car = new Car("12가0001", "A-1");
-//        parkingLot.receiveCar(car);
-//        parkingLot.parking();
-//
-//        assertThat(parkingLot.findCar(car.getNumber()).getNumber())
-//            .isEqualTo("12가0001");
-//    }
+    @DisplayName("A-1에 주차한다. -주차공간이 비어있어야지만 주차가 가능하다. 차량이 있다면 바로 옆공간에 주차한다.")
+    @Test
+    void parkingTest_mustEmpty() {
+        exeInitStructorAsMockingMap();
+
+        Car car = new Car("12가0001", "A-1");
+        parkingLot.receiveCar(car);
+        parkingLot.parking();
+
+        Car car2 = new Car("12가0002", "A-1");
+        parkingLot.receiveCar(car2);
+        parkingLot.parking();
+
+        testCaseParkingTest_mustEmpty(0, "12가0001");
+        testCaseParkingTest_mustEmpty(1, "12가0002");
+    }
+
+    private void testCaseParkingTest_mustEmpty(int index, String carNumber) {
+        assertThat(parkingLot.getParkingSpaces().get(index).getCar().getNumber())
+            .isEqualTo(carNumber);
+        assertThat(parkingLot.getParkingSpaces().get(index).getCar().getLocationHoping())
+            .isEqualTo("A-1");
+        assertThat(parkingLot.getParkingSpaces().get(index).getCar().getLocation())
+            .isEqualTo("A-1");
+        assertThat(parkingLot.getParkingSpaces().get(index).getCode())
+            .isEqualTo("A-1");
+    }
+
+    @DisplayName("주차장에서 차객체를 찾는다.")
+    @Test
+    void findCarTest() {
+        exeInitStructorAsMockingMap();
+
+        Car car = new Car("12가0001", "A-1");
+        parkingLot.receiveCar(car);
+        parkingLot.parking();
+
+        String carNumber = car.getNumber();
+        assertThat(parkingLot.findCar(carNumber).getNumber())
+            .isEqualTo("12가0001");
+    }
 
 //    @DisplayName("주차장에서 차가 나간다.")
 //    @Test
@@ -90,4 +126,9 @@ public class ParkingLotTest {
 //        assertThatThrownBy(() -> parkingLot.findCar(car.getNumber()))
 //            .isInstanceOf(IllegalArgumentException.class);
 //    }
+
+    @AfterEach
+    void afterEach() {
+        parkingLot.getParkingSpaces().clear();
+    }
 }

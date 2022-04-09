@@ -19,7 +19,8 @@ public class FindAvailableSpace {
         for (int i = 0; i < this.parkingSpaces.size(); i++) {
             parkingSpaceOfIndex = this.parkingSpaces.get(i);
 
-            if (!isEqualCode(locationHoping, parkingSpaceOfIndex) || !isEmptyAtParkingSpaceToHope(parkingSpaceOfIndex)) {
+            if (!isEqualCode(locationHoping, parkingSpaceOfIndex)
+                || !isEmptyAtParkingSpaceToHope(parkingSpaceOfIndex)) {
                 continue;
             }
 

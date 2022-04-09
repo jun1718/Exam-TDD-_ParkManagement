@@ -1,23 +1,19 @@
 package com.nhnacademy.exam.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.nhnacademy.exam.main.Car;
 import com.nhnacademy.exam.main.FindAvailableSpace;
 import com.nhnacademy.exam.main.ParkingLot;
-import com.nhnacademy.exam.main.ParkingSpace;
 import com.nhnacademy.exam.main.Structor;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.matchers.Find;
+
 
 public class FindAvailableSpaceTest {
     FindAvailableSpace findAvailableSpace = null;
@@ -78,12 +74,13 @@ public class FindAvailableSpaceTest {
             .isTrue();
     }
 
-    @Test
-    void name() {
-        Car car = new Car("12가0001", "A-1");
 
-        assertThatCode(() -> parkingLot.receiveCar(car))
-            .doesNotThrowAnyException();
+    @DisplayName("A-1구역의 첫번째 공간에 다른 차를 넣었을때 A-1구역을 찾으면 사용중인 공간을 제외하고 다음 index가 나온다.")
+    @Test
+    void findAvailableSpaceTest_caseAddedIndexChange() {
+        Car car = new Car("12가0001", "A-1");
+        parkingLot.receiveCar(car);
+        parkingLot.parking();
 
         testCase("A-1", 1);
     }

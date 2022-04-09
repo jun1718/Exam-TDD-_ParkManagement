@@ -32,7 +32,7 @@ public class EntranceTest {
     @DisplayName("차량 번호를 스캔한다.")
     @Test
     void scanTest() {
-        assertThat(entrance.getInputRcords().get("12가0001"))
+        assertThat(entrance.getInputRecords().get("12가0001"))
             .isNotNull();
     }
 
@@ -67,7 +67,7 @@ public class EntranceTest {
 
     @DisplayName("통합테스트(차량 여러대가 입구로 잘들어오는지 확인, 차량 여러대가 다른 곳으로 이동하면서 삭제되는지 확인)")
     @Test
-    void name() {
+    void takeCarTest_many() {
         Car mockedCar2 = makeMockedCar("12가0002");
         Car mockedCar3 = makeMockedCar("12가0003");
 
@@ -76,12 +76,8 @@ public class EntranceTest {
 
         assertThat(entrance.takeCar().getNumber().equals("12가0001"))
             .isTrue();
-
-
         assertThat(entrance.takeCar().getNumber().equals("12가0002"))
             .isTrue();
-
-
         assertThat(entrance.takeCar().getNumber().equals("12가0003"))
             .isTrue();
 
