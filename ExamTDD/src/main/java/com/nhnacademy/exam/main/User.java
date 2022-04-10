@@ -38,6 +38,13 @@ public class User {
         this.payTime = initTime;
     }
 
+    public void addTimeHours(long hours) {
+        if (this.payTime == null) {
+            throw new InvalidRequestStateException("initTime으로 시간을 먼저 초기화 해주셔야 해당 메소드를 사용 가능합니다.");
+        }
+        this.payTime = this.payTime.plusHours(hours);
+    }
+
     public void addTimeMinutes(long minutes) {
         if (this.payTime == null) {
             throw new InvalidRequestStateException("initTime으로 시간을 먼저 초기화 해주셔야 해당 메소드를 사용 가능합니다.");

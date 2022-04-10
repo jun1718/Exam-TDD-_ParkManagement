@@ -77,6 +77,17 @@ public class ParkingLot {
         return parkingSpace.getCar();
     }
 
+    public void leaveParkingLot(User user) {
+        Car car = user.getCar();
+        Integer index = indexRepositoryForSpeedUp.get(car.getNumber());
+        if (index == null) throw new IllegalArgumentException("매개변수로 전달된 차번호의 차량은 주차장에 없습니다.");
+
+        Exit exit = new Exit(user, parkingSpaces, index);
+        if (exit.pay(entrance.getInputRecords())) exit.pass();
+
+        indexRepositoryForSpeedUp.remove(car.getNumber());
+    }
+
     public List<ParkingSpace> getParkingSpaces() {
         return parkingSpaces;
     }
@@ -85,14 +96,7 @@ public class ParkingLot {
         return parkingCount;
     }
 
-    public void leaveParkingLot(User user) {
-        Car car = user.getCar();
-        Integer index = indexRepositoryForSpeedUp.get(car.getNumber());
-        if (index == null) throw new IllegalArgumentException("매개변수로 전달된 차번호의 차량은 주차장에 없습니다.");
-
-        Exit exit = new Exit(user, parkingSpaces, index);
-        if (exit.pay()) exit.pass();
-
-        indexRepositoryForSpeedUp.remove(car.getNumber());
+    public Entrance getEntrance() {
+        return entrance;
     }
 }
