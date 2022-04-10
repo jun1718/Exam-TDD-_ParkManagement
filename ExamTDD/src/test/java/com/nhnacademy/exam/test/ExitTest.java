@@ -74,4 +74,9 @@ public class ExitTest {
         assertThat(parkingLot.getParkingSpaces().get(0).getCar())
             .isEqualTo(Car.getEmptyCar());
     }
+
+    @Test
+    void name() {
+
+    }
 }

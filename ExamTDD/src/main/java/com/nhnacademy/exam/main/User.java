@@ -4,6 +4,7 @@ public class User {
     private final String userId;
     private Car car = null;
     private Money money = new Money();
+    private long time = 0;
 
     public User(String userId) {
         this.userId = userId;
@@ -28,5 +29,13 @@ public class User {
 
     public Money getMoney() {
         return this.money;
+    }
+
+    public void addTime(long time) {
+        this.time += time;
+    }
+
+    public long getTime() {
+        return this.time;
     }
 }

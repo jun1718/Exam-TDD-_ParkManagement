@@ -44,7 +44,7 @@ public class ParkingSystemTest {
 
     @DisplayName("등록된 손님의 지갑 및 차량정보를 조회한다.")
     @Test
-    void receiveUserTets() {
+    void receiveUserTest() {
         Car car = new Car("12가0001", "A-1");
         user.setCar(car);
         parkingSystem.addUser(user);
