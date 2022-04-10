@@ -8,6 +8,7 @@ public class User {
     private Car car = null;
     private Money money = new Money();
     private LocalDateTime payTime = null;
+    private Bacode bacode = new Bacode();
 
     public User(String userId) {
         this.userId = userId;
@@ -16,6 +17,10 @@ public class User {
     public User(String userId, Money money) {
         this.userId = userId;
         this.money = money;
+    }
+
+    public Bacode getBacode() {
+        return bacode;
     }
 
     public String getUserId() {

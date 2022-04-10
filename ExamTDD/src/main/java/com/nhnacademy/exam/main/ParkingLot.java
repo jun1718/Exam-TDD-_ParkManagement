@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class ParkingLot {
     private Entrance entrance = new Entrance();
+    
     private List<ParkingSpace> parkingSpaces = new ArrayList<>();
     private Map<String, Integer> indexRepositoryForSpeedUp = new HashMap<>();
     private static int parkingCount = 0;

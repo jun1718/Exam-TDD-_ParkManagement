@@ -10,6 +10,7 @@ public class Exit {
     private List<ParkingSpace> parkingSpaces;
     private Entrance entrance = null;
     private int index;
+    private AccessPayco accessPayco = new AccessPayco();
 
     public Exit(User user, List<ParkingSpace> parkingSpaces, int index) {
         this.user = user;
@@ -17,23 +18,35 @@ public class Exit {
         this.index = index;
     }
 
+    public void setAccessPayco(AccessPayco accessPayco) {
+        this.accessPayco = accessPayco;
+    }
+
     public boolean pay(Map<String, LocalDateTime> inputRecords, PayPolicy payPolicy) {
         LocalDateTime startTime = inputRecords.get(this.user.getCar().getNumber());
         Duration usingTime = Duration.between(startTime, this.user.getPayTime());
+        
+        usingTime.minusHours(1);
         long payAmount = getPayAmount(startTime, usingTime, payPolicy.getTimeList(), payPolicy.getPayList());
 
         if (this.user.getCar().getType() == CarType.LIGHT) {
             payAmount *= 0.5;
         }
+
+        if (accessPayco.access(user.getBacode())) {
+            payAmount *= 0.9;
+        }
+
         try {
             this.user.getMoney().subAmount(payAmount);
-        }catch (ArithmeticException e) {
+        } catch (ArithmeticException e) {
             e.printStackTrace();
             throw e;
         }
 
         return true;
     }
+
     private long getPayAmount(LocalDateTime startTime, Duration usingTime, List<String> timeList, List<Long> payList) {
         long usingTimeSeconds = usingTime.toSeconds();
 
@@ -92,6 +105,7 @@ public class Exit {
         }
         return money;
     }
+
 
     public void pass() {
         parkingSpaces.set(index, new ParkingSpace("", Car.getEmptyCar()));

@@ -200,6 +200,11 @@ public class ParkingLotTest {
             .hasMessageContaining("트럭은 여기");
     }
 
+    @Test
+    void name() {
+
+    }
+
     @AfterEach
     void afterEach() {
         parkingLot.getParkingSpaces().clear();

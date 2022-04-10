@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.nhnacademy.exam.main.AccessPayco;
+import com.nhnacademy.exam.main.Bacode;
 import com.nhnacademy.exam.main.Car;
 import com.nhnacademy.exam.main.CarType;
 import com.nhnacademy.exam.main.Exit;
@@ -361,5 +363,28 @@ public class ExitTest {
         exit.pay(parkingLot.getEntrance().getInputRecords(), payPolicy);
         assertThat(user.getMoney().getAmount())
             .isEqualTo(0L);
+    }
+
+    @Test
+    void name() {
+        List<String> timeList = new ArrayList<>();
+        List<Long> payList = new ArrayList<>();
+
+        makeMockMaterial(timeList, payList);
+        PayPolicy payPolicy = mockPayPolicy(timeList, payList);
+
+        user.getMoney().setAmount(1000L);
+        user.addTimeMinutes(10);
+
+        AccessPayco payco = mock(AccessPayco.class);
+        when(payco.access(any()))
+            .thenReturn(true);
+
+        exit.setAccessPayco(payco);
+        user.getBacode().setBacode("1234");
+        exit.pay(parkingLot.getEntrance().getInputRecords(), payPolicy);
+
+        assertThat(user.getMoney().getAmount())
+            .isEqualTo(100);
     }
 }
