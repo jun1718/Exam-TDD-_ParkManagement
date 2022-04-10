@@ -56,7 +56,13 @@ public class ExitTest {
     @DisplayName("주차요금 1000원을 계산하여 손님의 지갑사정을 변경한 후 true를 리턴한다. 10000 -> 9000")
     @Test
     void payTest_basic() {
-        assertThat(exit.pay(parkingLot.getEntrance().getInputRecords()))
+        List<String> timeList = new ArrayList<>();
+        List<Long> payList = new ArrayList<>();
+
+        makeMockMaterial(timeList, payList);
+        PayPolicy payPolicy = mockPayPolicy(timeList, payList);
+
+        assertThat(exit.pay(parkingLot.getEntrance().getInputRecords(), payPolicy))
             .isTrue();
         assertThat(user.getMoney().getAmount())
             .isEqualTo(9000L);
@@ -65,9 +71,15 @@ public class ExitTest {
     @DisplayName("주차요금이 천원일 때 손님이 지갑에 가진 금액보다 주차요금이 큰 경우 감산없이 예외를 출력하고 false를 리턴한다.")
     @Test
     void payTest_basicEx() {
+        List<String> timeList = new ArrayList<>();
+        List<Long> payList = new ArrayList<>();
+
+        makeMockMaterial(timeList, payList);
+        PayPolicy payPolicy = mockPayPolicy(timeList, payList);
+
         user.getMoney().setAmount(800L);
 
-        assertThat(exit.pay(parkingLot.getEntrance().getInputRecords()))
+        assertThat(exit.pay(parkingLot.getEntrance().getInputRecords(), payPolicy))
             .isFalse();
         assertThat(user.getMoney().getAmount())
             .isEqualTo(800L);
@@ -87,8 +99,14 @@ public class ExitTest {
     @DisplayName("사용시간 29분 일때(30분 00.00초이내) 1000원 요금발생한다. 10000 -> 9000")
     @Test
     void payTest_before30Minutes() {
+        List<String> timeList = new ArrayList<>();
+        List<Long> payList = new ArrayList<>();
+
+        makeMockMaterial(timeList, payList);
+        PayPolicy payPolicy = mockPayPolicy(timeList, payList);
+
         user.addTimeMinutes(9);
-        exit.pay(parkingLot.getEntrance().getInputRecords());
+        exit.pay(parkingLot.getEntrance().getInputRecords(), payPolicy);
         assertThat(user.getMoney().getAmount())
             .isEqualTo(9000L);
     }
@@ -96,9 +114,15 @@ public class ExitTest {
     @DisplayName("사용시간 30분 1초일때 1500원 요금발생한다. 10000 -> 8500")
     @Test
     void payTest_30Minutes1Second() {
+        List<String> timeList = new ArrayList<>();
+        List<Long> payList = new ArrayList<>();
+
+        makeMockMaterial(timeList, payList);
+        PayPolicy payPolicy = mockPayPolicy(timeList, payList);
+
         user.addTimeMinutes(10);
         user.addTimeSeconds(1);
-        exit.pay(parkingLot.getEntrance().getInputRecords());
+        exit.pay(parkingLot.getEntrance().getInputRecords(), payPolicy);
         assertThat(user.getMoney().getAmount())
             .isEqualTo(8500L);
     }
@@ -106,8 +130,14 @@ public class ExitTest {
     @DisplayName("사용시간 50분일때 2000원 요금발생한다. 10000 -> 8000")
     @Test
     void payTest_50Minutes() {
+        List<String> timeList = new ArrayList<>();
+        List<Long> payList = new ArrayList<>();
+
+        makeMockMaterial(timeList, payList);
+        PayPolicy payPolicy = mockPayPolicy(timeList, payList);
+
         user.addTimeMinutes(30);
-        exit.pay(parkingLot.getEntrance().getInputRecords());
+        exit.pay(parkingLot.getEntrance().getInputRecords(), payPolicy);
         assertThat(user.getMoney().getAmount())
             .isEqualTo(8000L);
     }
@@ -115,8 +145,14 @@ public class ExitTest {
     @DisplayName("사용시간 61분일때 3000원 요금발생한다. 10000 -> 7000")
     @Test
     void payTest_61Minutes() {
+        List<String> timeList = new ArrayList<>();
+        List<Long> payList = new ArrayList<>();
+
+        makeMockMaterial(timeList, payList);
+        PayPolicy payPolicy = mockPayPolicy(timeList, payList);
+
         user.addTimeMinutes(41);
-        exit.pay(parkingLot.getEntrance().getInputRecords());
+        exit.pay(parkingLot.getEntrance().getInputRecords(), payPolicy);
         assertThat(user.getMoney().getAmount())
             .isEqualTo(7000L);
     }
@@ -124,8 +160,14 @@ public class ExitTest {
     @DisplayName("사용시간 6시간일때 3000원 요금발생한다. 10000 -> 7000")
     @Test
     void payTest_6Hours() {
+        List<String> timeList = new ArrayList<>();
+        List<Long> payList = new ArrayList<>();
+
+        makeMockMaterial(timeList, payList);
+        PayPolicy payPolicy = mockPayPolicy(timeList, payList);
+
         user.addTimeMinutes(41);
-        exit.pay(parkingLot.getEntrance().getInputRecords());
+        exit.pay(parkingLot.getEntrance().getInputRecords(), payPolicy);
         assertThat(user.getMoney().getAmount())
             .isEqualTo(7000L);
     }

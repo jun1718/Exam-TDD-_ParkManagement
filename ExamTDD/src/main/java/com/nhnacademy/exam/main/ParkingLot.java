@@ -10,7 +10,8 @@ public class ParkingLot {
     private List<ParkingSpace> parkingSpaces = new ArrayList<>();
     private Map<String, Integer> indexRepositoryForSpeedUp = new HashMap<>();
     private static int parkingCount = 0;
-    Map<String, Integer> structorMap = null;
+    private Map<String, Integer> structorMap = null;
+    private PayPolicy payPolicy = null;
 
     public ParkingLot() {}
     public ParkingLot(Structor structor) {
@@ -79,13 +80,17 @@ public class ParkingLot {
 
     public void leaveParkingLot(User user) {
         Car car = user.getCar();
-        Integer index = indexRepositoryForSpeedUp.get(car.getNumber());
+        Integer index = this.indexRepositoryForSpeedUp.get(car.getNumber());
         if (index == null) throw new IllegalArgumentException("매개변수로 전달된 차번호의 차량은 주차장에 없습니다.");
 
-        Exit exit = new Exit(user, parkingSpaces, index);
-        if (exit.pay(entrance.getInputRecords())) exit.pass();
+        Exit exit = new Exit(user, this.parkingSpaces, index);
+        if (exit.pay(this.entrance.getInputRecords(), this.payPolicy)) exit.pass();
 
-        indexRepositoryForSpeedUp.remove(car.getNumber());
+        this.indexRepositoryForSpeedUp.remove(car.getNumber());
+    }
+
+    public void setPayPolicy(PayPolicy payPolicy) {
+        this.payPolicy = payPolicy;
     }
 
     public List<ParkingSpace> getParkingSpaces() {

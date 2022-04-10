@@ -10,8 +10,10 @@ import com.nhnacademy.exam.main.Car;
 import com.nhnacademy.exam.main.Money;
 import com.nhnacademy.exam.main.ParkingLot;
 import com.nhnacademy.exam.main.ParkingSpace;
+import com.nhnacademy.exam.main.PayPolicy;
 import com.nhnacademy.exam.main.Structor;
 import com.nhnacademy.exam.main.User;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -147,11 +149,44 @@ public class ParkingLotTest {
 
         parkingLot.receiveCar(user.getCar());
         parkingLot.parking();
+
+        LocalDateTime startTime = LocalDateTime.of(2022, 04, 10, 12, 00, 00);
+        user.initTime(parkingLot.getEntrance().getInputRecords().get("12가0001"));
+        user.addTimeSeconds(1);
+
+        List<String> timeList = new ArrayList<>();
+        List<Long> payList = new ArrayList<>();
+
+        makeMockMaterial(timeList, payList);
+        PayPolicy payPolicy = mockPayPolicy(timeList, payList);
+
+        parkingLot.setPayPolicy(payPolicy);
         parkingLot.leaveParkingLot(user);
 
         assertThatThrownBy(() -> parkingLot.findCar(car.getNumber()))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("차번호의 차량은 주차장에 없습니다.");
+    }
+
+    private void makeMockMaterial(List<String> timeList, List<Long> payList) {
+        timeList.add("first 1800");
+        timeList.add("each 600");
+        timeList.add("day 86400");
+
+        payList.add(1000L);
+        payList.add(500L);
+        payList.add(10000L);
+    }
+
+    private PayPolicy mockPayPolicy(List<String> timeList, List<Long> payList) {
+        PayPolicy payPolicy = mock(PayPolicy.class);
+        when(payPolicy.getTimeList())
+            .thenReturn(timeList);
+
+        when(payPolicy.getPayList())
+            .thenReturn(payList);
+
+        return payPolicy;
     }
 
     @AfterEach
