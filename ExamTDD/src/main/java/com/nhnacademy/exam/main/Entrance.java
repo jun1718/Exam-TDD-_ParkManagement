@@ -1,5 +1,6 @@
 package com.nhnacademy.exam.main;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -11,7 +12,7 @@ import java.util.Map;
 import java.util.Queue;
 
 public class Entrance {
-    Map<String, Date> enteredTimeRecords = new HashMap<>();
+    Map<String, LocalDateTime> enteredTimeRecords = new HashMap<>();
     Deque<Car> holdCarQue = new LinkedList<Car>();
 
     public void receiveCar(Car car) {
@@ -22,8 +23,8 @@ public class Entrance {
     }
 
     private void scan() {
-        Date date = new Date();
-        enteredTimeRecords.put(holdCarQue.peekLast().getNumber(), date);
+        LocalDateTime dateTime = LocalDateTime.now();
+        enteredTimeRecords.put(holdCarQue.peekLast().getNumber(), dateTime);
     }
 
     public Car takeCar() {
@@ -34,7 +35,7 @@ public class Entrance {
         return holdCarQue.pollFirst();
     }
 
-    public Map<String, Date> getInputRecords() {
+    public Map<String, LocalDateTime> getInputRecords() {
         return enteredTimeRecords;
     }
 

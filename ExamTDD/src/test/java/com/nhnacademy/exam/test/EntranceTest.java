@@ -7,6 +7,12 @@ import static org.mockito.Mockito.when;
 
 import com.nhnacademy.exam.main.Car;
 import com.nhnacademy.exam.main.Entrance;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -84,5 +90,87 @@ public class EntranceTest {
         assertThatThrownBy(() -> entrance.takeCar())
             .isInstanceOf(IndexOutOfBoundsException.class)
             .hasMessageContaining("차량이 없습니다.");
+    }
+
+    @Test
+    void scanTest_LocalDateTime() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime getTime = entrance.getInputRecords().get("12가0001");
+        assertThat(getTime.compareTo(now))
+            .isEqualTo(-1);
+
+        assertThat(getTime.isAfter(now))
+            .isFalse();
+
+        assertThat(getTime.isBefore(now))
+            .isTrue();
+
+        assertThat(getTime.isEqual(now))
+            .isFalse();
+
+//        System.out.println(now);
+////        System.out.println(now.getMinute());
+////        System.out.println(now.get(ChronoField.MINUTE_OF_HOUR));
+//
+//        System.out.println(now.plusMinutes(60 * 24 * 2));
+//        System.out.println();
+//        System.out.println(now.getSecond());
+//
+//        LocalTime time = LocalTime.now();
+//        System.out.println(time);
+//        System.out.println(time.truncatedTo(ChronoUnit.DAYS));
+//        System.out.println(now.truncatedTo(ChronoUnit.DAYS));
+//
+//
+//        System.out.println(now.getMinute());
+//
+//        System.out.println();
+//        Instant instantNow = Instant.now();
+//        System.out.println(now);
+//        System.out.println(instantNow);
+//        System.out.println(Instant.ofEpochMilli(instantNow.getEpochSecond()));
+//        System.out.println(Instant.ofEpochSecond(instantNow.getEpochSecond()));
+//
+//        System.out.println();
+//        System.out.println(getTime);
+//        System.out.println(now);
+//        Duration du = Duration.between(getTime, now.plusMinutes(1));
+//        System.out.println(du);
+//
+//        Duration du2 = Duration.between(now.plusMinutes(60), getTime);
+//        System.out.println(du2);
+//
+//        System.out.println(du.get(ChronoUnit.SECONDS));
+//        System.out.println(du.get(ChronoUnit.NANOS));
+//        System.out.println(du);
+//        System.out.println(du.toMillis());
+//        System.out.println(du.toSeconds());
+//        System.out.println();
+//
+//        LocalDateTime start = LocalDateTime.of(2022, 04, 10, 9, 30, 34);
+//        LocalDateTime end = LocalDateTime.of(2022, 04, 11, 9, 31, 37);
+//
+//        Duration du3 = Duration.between(start, end);
+//        System.out.println(du3);
+//        System.out.println(du3.getSeconds());
+//
+//        System.out.println(du3.toMillis());
+
+        System.out.println(getTime);
+        now = now.plusMinutes(60 * 24);
+//        now = now.plusSeconds(30);
+//        now = now.plusMinutes(60 * 24 * 2);
+        System.out.println(now);
+
+        Duration du = Duration.between(getTime, now);
+        long minute = du.toMinutes();
+        System.out.println(minute);
+        System.out.println(du.toHours());
+        System.out.println(du.toDays());
+
+        getTime = getTime.plusMinutes(minute);
+
+        System.out.println(getTime);
+
     }
 }
