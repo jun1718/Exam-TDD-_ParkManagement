@@ -6,10 +6,20 @@ public class Car {
     private final String number;
     private String locationHoping = "";
     private String location = "";
+    private CarType type;
 
     public Car(String number, String locationHoping) {
         this.number = number;
         this.locationHoping = locationHoping;
+        type = CarType.BASIC;
+    }
+
+    public void setType(CarType type) {
+        this.type = type;
+    }
+
+    public CarType getType() {
+        return type;
     }
 
     public static Car getEmptyCar() {

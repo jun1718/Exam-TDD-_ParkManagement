@@ -7,14 +7,8 @@ import static org.mockito.Mockito.when;
 
 import com.nhnacademy.exam.main.Car;
 import com.nhnacademy.exam.main.Entrance;
-import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

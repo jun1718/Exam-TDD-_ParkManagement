@@ -2,8 +2,6 @@ package com.nhnacademy.exam.main;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,15 +20,16 @@ public class Exit {
     public boolean pay(Map<String, LocalDateTime> inputRecords, PayPolicy payPolicy) {
         LocalDateTime startTime = inputRecords.get(this.user.getCar().getNumber());
         Duration usingTime = Duration.between(startTime, this.user.getPayTime());
-
-
         long payAmount = getPayAmount(startTime, usingTime, payPolicy.getTimeList(), payPolicy.getPayList());
 
+        if (this.user.getCar().getType() == CarType.LIGHT) {
+            payAmount *= 0.5;
+        }
         try {
             this.user.getMoney().subAmount(payAmount);
-        } catch (ArithmeticException e) {
+        }catch (ArithmeticException e) {
             e.printStackTrace();
-            return false;
+            throw e;
         }
 
         return true;

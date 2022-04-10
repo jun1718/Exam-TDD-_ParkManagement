@@ -1,12 +1,13 @@
 package com.nhnacademy.exam.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.useDefaultDateFormatsOnly;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.nhnacademy.exam.main.Car;
+import com.nhnacademy.exam.main.CarType;
 import com.nhnacademy.exam.main.Exit;
 import com.nhnacademy.exam.main.Money;
 import com.nhnacademy.exam.main.ParkingLot;
@@ -68,7 +69,7 @@ public class ExitTest {
             .isEqualTo(9000L);
     }
 
-    @DisplayName("주차요금이 천원일 때 손님이 지갑에 가진 금액보다 주차요금이 큰 경우 감산없이 예외를 출력하고 false를 리턴한다.")
+    @DisplayName("주차요금이 천원일 때 손님이 지갑에 가진 금액보다 주차요금이 큰 경우 감산없이 예외를 출력하고 밖으로 나갈 수 없다.")
     @Test
     void payTest_basicEx() {
         List<String> timeList = new ArrayList<>();
@@ -79,10 +80,15 @@ public class ExitTest {
 
         user.getMoney().setAmount(800L);
 
-        assertThat(exit.pay(parkingLot.getEntrance().getInputRecords(), payPolicy))
-            .isFalse();
+        assertThatThrownBy(() -> exit.pay(parkingLot.getEntrance().getInputRecords(), payPolicy))
+            .isInstanceOf(ArithmeticException.class)
+            .hasMessageContaining("돈이 없으면 나갈 수 없습니다.");
         assertThat(user.getMoney().getAmount())
             .isEqualTo(800L);
+
+        int index = parkingLot.getIndexRepositoryForSpeedUp().get("12가0001");
+        assertThat(parkingLot.getParkingSpaces().get(index))
+            .isNotNull();
     }
 
     @DisplayName("주차공간을 비운다.(차가 주차장을 나간다)")
@@ -339,4 +345,21 @@ public class ExitTest {
         testCase2(0L, 0L, 1L, 10000L, 10000L);
     }
 
+    @DisplayName("경차의 경우 계산시 요금이 50%감면된다. 500 -> 0")
+    @Test
+    void payTest_LightCar() {
+        List<String> timeList = new ArrayList<>();
+        List<Long> payList = new ArrayList<>();
+
+        makeMockMaterial(timeList, payList);
+        PayPolicy payPolicy = mockPayPolicy(timeList, payList);
+
+        user.getMoney().setAmount(500L);
+        user.addTimeMinutes(10);
+        user.getCar().setType(CarType.LIGHT);
+
+        exit.pay(parkingLot.getEntrance().getInputRecords(), payPolicy);
+        assertThat(user.getMoney().getAmount())
+            .isEqualTo(0L);
+    }
 }

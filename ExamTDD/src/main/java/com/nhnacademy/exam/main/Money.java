@@ -28,7 +28,7 @@ public class Money {
 
     public void subAmount(long amount) {
         if (this.amount < amount) {
-            throw new ArithmeticException("현실 세계의 현금은 음수가 없습니다. 현재금액 : " + this.amount
+            throw new ArithmeticException("돈이 없으면 나갈 수 없습니다. 현재금액 : " + this.amount
                 + " 주차금액 : " + amount);
         }
 

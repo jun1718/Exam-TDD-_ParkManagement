@@ -35,7 +35,11 @@ public class ParkingLot {
 
     public void receiveCar(Car car) {
         if (car == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("차 객체가 초기화되지 않았습니다.");
+        }
+
+        if (car.getType() == CarType.TRUCK) {
+            throw new IllegalArgumentException("트럭은 여기 못들어옵니다.");
         }
 
         entrance.receiveCar(car);
@@ -103,5 +107,9 @@ public class ParkingLot {
 
     public Entrance getEntrance() {
         return entrance;
+    }
+
+    public Map<String, Integer> getIndexRepositoryForSpeedUp() {
+        return indexRepositoryForSpeedUp;
     }
 }

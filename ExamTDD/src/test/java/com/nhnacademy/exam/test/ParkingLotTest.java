@@ -7,9 +7,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.nhnacademy.exam.main.Car;
+import com.nhnacademy.exam.main.CarType;
 import com.nhnacademy.exam.main.Money;
 import com.nhnacademy.exam.main.ParkingLot;
-import com.nhnacademy.exam.main.ParkingSpace;
 import com.nhnacademy.exam.main.PayPolicy;
 import com.nhnacademy.exam.main.Structor;
 import com.nhnacademy.exam.main.User;
@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -187,6 +186,18 @@ public class ParkingLotTest {
             .thenReturn(payList);
 
         return payPolicy;
+    }
+
+
+    @DisplayName("트럭은 주차장에 들어올 수 없다.")
+    @Test
+    void receiveCarTest_Truck() {
+        Car car = new Car("12가0001", "A-1");
+        car.setType(CarType.TRUCK);
+
+        assertThatThrownBy(() -> parkingLot.receiveCar(car))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("트럭은 여기");
     }
 
     @AfterEach
