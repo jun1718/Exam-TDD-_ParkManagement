@@ -365,8 +365,9 @@ public class ExitTest {
             .isEqualTo(0L);
     }
 
+    @DisplayName("페이코 인증회원이면 10% 할인된다. 1000 -> 100")
     @Test
-    void name() {
+    void payTest_PaycoAccess() {
         List<String> timeList = new ArrayList<>();
         List<Long> payList = new ArrayList<>();
 
@@ -386,5 +387,44 @@ public class ExitTest {
 
         assertThat(user.getMoney().getAmount())
             .isEqualTo(100);
+    }
+
+    @DisplayName("3시간 주차 후 2시간 주차권을 제시하면 1시간 요금만 발생한다.")
+    @Test
+    void payTest_coupon2Hours() {
+        List<String> timeList = new ArrayList<>();
+        List<Long> payList = new ArrayList<>();
+
+        makeMockMaterial(timeList, payList);
+        PayPolicy payPolicy = mockPayPolicy(timeList, payList);
+
+        user.getMoney().setAmount(2500L);
+
+        user.addTimeHours(2);
+        user.addTimeMinutes(40);
+        user.setCoupon(2);
+        exit.pay(parkingLot.getEntrance().getInputRecords(), payPolicy);
+
+        assertThat(user.getMoney().getAmount())
+            .isEqualTo(0);
+    }
+
+    @DisplayName("59분 주차 후 1시간 주차권을 제시하면 무료다.")
+    @Test
+    void payTest_coupon1Hours() {
+        List<String> timeList = new ArrayList<>();
+        List<Long> payList = new ArrayList<>();
+
+        makeMockMaterial(timeList, payList);
+        PayPolicy payPolicy = mockPayPolicy(timeList, payList);
+
+        user.getMoney().setAmount(2000L);
+
+        user.addTimeMinutes(39);
+        user.setCoupon(1);
+        exit.pay(parkingLot.getEntrance().getInputRecords(), payPolicy);
+
+        assertThat(user.getMoney().getAmount())
+            .isEqualTo(2000);
     }
 }

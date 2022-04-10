@@ -25,8 +25,15 @@ public class Exit {
     public boolean pay(Map<String, LocalDateTime> inputRecords, PayPolicy payPolicy) {
         LocalDateTime startTime = inputRecords.get(this.user.getCar().getNumber());
         Duration usingTime = Duration.between(startTime, this.user.getPayTime());
-        
-        usingTime.minusHours(1);
+
+        int coupon = this.user.getCoupon();
+        if (coupon > 0) {
+            usingTime = usingTime.minusHours(coupon);
+            if (usingTime.toMinutes() < 0) {
+                return true;
+            }
+        }
+
         long payAmount = getPayAmount(startTime, usingTime, payPolicy.getTimeList(), payPolicy.getPayList());
 
         if (this.user.getCar().getType() == CarType.LIGHT) {

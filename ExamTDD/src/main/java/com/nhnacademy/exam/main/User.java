@@ -9,6 +9,7 @@ public class User {
     private Money money = new Money();
     private LocalDateTime payTime = null;
     private Bacode bacode = new Bacode();
+    private int coupon = 0;
 
     public User(String userId) {
         this.userId = userId;
@@ -66,5 +67,13 @@ public class User {
 
     public LocalDateTime getPayTime() {
         return this.payTime;
+    }
+
+    public void setCoupon(int coupon) {
+        this.coupon = coupon;
+    }
+
+    public int getCoupon() {
+        return this.coupon;
     }
 }

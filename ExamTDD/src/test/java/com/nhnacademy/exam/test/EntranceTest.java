@@ -86,9 +86,11 @@ public class EntranceTest {
             .hasMessageContaining("차량이 없습니다.");
     }
 
+    @DisplayName("현재시간과 입장시찍힌 시간을 비교한다.")
     @Test
     void scanTest_LocalDateTime() {
         LocalDateTime now = LocalDateTime.now();
+        now = now.plusMinutes(4);
         LocalDateTime getTime = entrance.getInputRecords().get("12가0001");
         assertThat(getTime.compareTo(now))
             .isEqualTo(-1);
