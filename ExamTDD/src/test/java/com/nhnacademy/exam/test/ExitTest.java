@@ -1,6 +1,7 @@
 package com.nhnacademy.exam.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.useDefaultDateFormatsOnly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -9,10 +10,13 @@ import com.nhnacademy.exam.main.Car;
 import com.nhnacademy.exam.main.Exit;
 import com.nhnacademy.exam.main.Money;
 import com.nhnacademy.exam.main.ParkingLot;
+import com.nhnacademy.exam.main.PayPolicy;
 import com.nhnacademy.exam.main.Structor;
 import com.nhnacademy.exam.main.User;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -134,7 +138,7 @@ public class ExitTest {
         testCase(60L, 0L, 0L, 30000L, 0L);
         testCase(48L, 0L, 0L, 30000L, 0L);
         testCase(14L, 0L, 0L, 16000L, 0L);
-        testCase(12L, 1L, 0L, 12000L, 1500L);
+        testCase(12L, 0L, 1L, 12000L, 1500L);
         testCase(12L, 0L, 0L, 12000L, 2000L);
         testCase(6L, 0L, 0L, 12000L, 2000L);
         testCase(5L, 0L, 0L, 12000L, 2000L);
@@ -160,9 +164,36 @@ public class ExitTest {
 
         exit = new Exit(user, parkingLot.getParkingSpaces(), 0);
 
-        exit.pay(map);
+        List<String> timeList = new ArrayList<>();
+        List<Long> payList = new ArrayList<>();
+
+        makeMockMaterial(timeList, payList);
+        PayPolicy payPolicy = mockPayPolicy(timeList, payList);
+
+        exit.pay(map, payPolicy);
         assertThat(user.getMoney().getAmount())
             .isEqualTo(remainingMoney);
+    }
+
+    private void makeMockMaterial(List<String> timeList, List<Long> payList) {
+        timeList.add("first 1800");
+        timeList.add("each 600");
+        timeList.add("day 86400");
+
+        payList.add(1000L);
+        payList.add(500L);
+        payList.add(10000L);
+    }
+
+    private PayPolicy mockPayPolicy(List<String> timeList, List<Long> payList) {
+        PayPolicy payPolicy = mock(PayPolicy.class);
+        when(payPolicy.getTimeList())
+            .thenReturn(timeList);
+
+        when(payPolicy.getPayList())
+            .thenReturn(payList);
+
+        return payPolicy;
     }
 
     @DisplayName("요금이 만원 이하인 경우")
@@ -181,6 +212,89 @@ public class ExitTest {
         testCase(0L, 30L, 1L, 10000L, 8500L);
         testCase(0L, 30L, 0L, 10000L, 9000L);
         testCase(0L, 0L, 1L, 10000L, 9000L);
+    }
+
+
+    @DisplayName("주차요금 정책이 변경되고 요금이 만원 이상인 경우")
+    @Test
+    void payTest_over10000Won_policyChange() {
+        testCase2(60L, 0L, 1L, 45500L, 0L);
+        testCase2(60L, 0L, 0L, 45000L, 0L);
+        testCase2(48L, 0L, 0L, 45000L, 0L);
+        testCase2(14L, 0L, 0L, 21000L, 0L);
+        testCase2(12L, 0L, 1L, 15500L, 0L);
+        testCase2(12L, 0L, 0L, 15000L, 0L);
+        testCase2(6L, 0L, 0L, 16000L, 1000L);
+        testCase2(5L, 0L, 0L, 13000L, 0L);
+        testCase2(4L, 0L, 1L, 10500L, 0L);
+        testCase2(4L, 0L, 0L, 10000L, 0L);
+    }
+
+    private void testCase2(long hour, long minute, long second, long initMoney, long remainingMoney) {
+        Map<String, LocalDateTime> map = mock(HashMap.class);
+        LocalDateTime startTime = LocalDateTime.of(2022, 04, 10, 12, 00, 00);
+        user.initTime(startTime);
+        user.getMoney().setAmount(initMoney);
+        user.addTimeHours(hour);
+        user.addTimeMinutes(minute);
+        user.addTimeSeconds(second);
+
+        when(map.get(any()))
+            .thenReturn(startTime);
+
+        exit = new Exit(user, parkingLot.getParkingSpaces(), 0);
+
+        List<String> timeList = new ArrayList<>();
+        List<Long> payList = new ArrayList<>();
+
+        makeMockMaterial2(timeList, payList);
+        PayPolicy payPolicy = mockPayPolicy2(timeList, payList);
+
+        exit.pay(map, payPolicy);
+        assertThat(user.getMoney().getAmount())
+            .isEqualTo(remainingMoney);
+    }
+
+    private void makeMockMaterial2(List<String> timeList, List<Long> payList) {
+        timeList.add("first 1800");
+        timeList.add("first 1800");
+        timeList.add("each 600");
+        timeList.add("day 86400");
+
+        payList.add(0L);
+        payList.add(1000L);
+        payList.add(500L);
+        payList.add(15000L);
+    }
+
+    private PayPolicy mockPayPolicy2(List<String> timeList, List<Long> payList) {
+        PayPolicy payPolicy = mock(PayPolicy.class);
+        when(payPolicy.getTimeList())
+            .thenReturn(timeList);
+
+        when(payPolicy.getPayList())
+            .thenReturn(payList);
+
+        return payPolicy;
+    }
+
+    @DisplayName("주차요금 정책이 변경되고 주차요금이 만원 이하인 경우")
+    @Test
+    void payTest_less10000Won_policyChange() {
+        testCase2(4L, 0L, 0L, 10000L, 0L);
+        testCase2(3L, 20L, 1L, 8500L, 0L);
+        testCase2(3L, 20L, 0L, 8000L, 0L);
+        testCase2(3L, 10L, 1L, 8000L, 0L);
+        testCase2(2L, 0L, 1L, 4500L, 0L);
+        testCase2(2L, 0L, 0L, 4000L, 0L);
+        testCase2(1L, 59L, 0L, 4000L, 0L);
+        testCase2(1L, 0L, 1L, 1500L, 0L);
+        testCase2(1L, 0L, 0L, 1000L, 0L);
+        testCase2(0L, 59L, 0L, 10000L, 9000L);
+        testCase2(0L, 50L, 0L, 10000L, 9000L);
+        testCase2(0L, 30L, 1L, 1000L, 0L);
+        testCase2(0L, 30L, 0L, 10000L, 10000L);
+        testCase2(0L, 0L, 1L, 10000L, 10000L);
     }
 
 }
